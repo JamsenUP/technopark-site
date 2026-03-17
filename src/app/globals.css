@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+:root {
+  --background: #020617;
+  --foreground: #f9fafb;
+}
+
+body {
+  background: radial-gradient(circle at top, #020617 0, #020617 50%, #020617 100%);
+  color: var(--foreground);
+}
+
+button {
+  font-family: inherit;
+}
+
+.container-max {
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  max-width: 1120px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container-max {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-max {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
