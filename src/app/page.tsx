@@ -1222,33 +1222,35 @@ function ContactsSection({
             <p>{phone}</p>
             <p>{email}</p>
             <p>
-              MAX:{" "}
               {contactsMaxUrl ? (
                 <a
                   href={contactsMaxUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-primary hover:text-primary-light break-all"
+                  className="text-primary hover:text-primary-light"
                 >
-                  {contactsMaxUrl}
+                  MAX
                 </a>
               ) : (
-                <span className="text-slate-400">(вставьте ссылку в DatoCMS)</span>
+                <>
+                  MAX: <span className="text-slate-400">(вставьте ссылку в DatoCMS)</span>
+                </>
               )}
             </p>
             <p>
-              Telegram:{" "}
               {contactsTelegramUrl ? (
                 <a
                   href={contactsTelegramUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-primary hover:text-primary-light break-all"
+                  className="text-primary hover:text-primary-light"
                 >
-                  {contactsTelegramUrl}
+                  Telegram
                 </a>
               ) : (
-                <span className="text-slate-400">(вставьте ссылку в DatoCMS)</span>
+                <>
+                  Telegram: <span className="text-slate-400">(вставьте ссылку в DatoCMS)</span>
+                </>
               )}
             </p>
             <p>{hours}</p>
