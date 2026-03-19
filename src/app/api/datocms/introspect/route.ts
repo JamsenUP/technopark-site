@@ -49,7 +49,9 @@ export async function GET(request: NextRequest) {
     }>({
       query: INTROSPECT_QUERY,
       variables: { typeName },
-      includeDrafts: false,
+      // Avoid stale schema responses while you're actively editing models in DatoCMS.
+      // This also disables caching in our GraphQL client.
+      includeDrafts: true,
       isVisualEditing: false,
     });
 

@@ -4,6 +4,7 @@ import { Card, Section } from "@/components/ui";
 import { SiteLayout } from "@/components/layout";
 import { performRequest } from "@/lib/datocms";
 import { cookies } from "next/headers";
+import { ImageLightbox } from "@/components/image-lightbox";
 
 const HOMEPAGE_CORE_QUERY = /* GraphQL */ `
   query HomepageCore {
@@ -15,6 +16,9 @@ const HOMEPAGE_CORE_QUERY = /* GraphQL */ `
       slug
       title
       description
+      serviceimage {
+        url
+      }
     }
   }
 `;
@@ -28,7 +32,118 @@ type HomepageCoreQuery = {
     slug: string;
     title: string;
     description: string | null;
+    serviceimage?: { url?: string | null } | null;
   }>;
+};
+
+const HOMEPAGE_CONTACTS_SOCIAL_QUERY = /* GraphQL */ `
+  query HomepageContactsSocial {
+    homepage {
+      contactsMaxUrl: contactsmax
+      contactsTelegramUrl: contactstelegram
+    }
+  }
+`;
+
+type HomepageContactsSocialQuery = {
+  homepage: {
+    contactsMaxUrl: string | null;
+    contactsTelegramUrl: string | null;
+  } | null;
+};
+
+const HOMEPAGE_CONTACTS_DOCS_QUERY = /* GraphQL */ `
+  query HomepageContactsDocs {
+    homepage {
+      contactsLicense1: license1 {
+        url
+      }
+      contactsLicense2: license2 {
+        url
+      }
+    }
+  }
+`;
+
+type HomepageContactsDocsQuery = {
+  homepage: {
+    contactsLicense1: { url: string | null } | null;
+    contactsLicense2: { url: string | null } | null;
+  } | null;
+};
+
+const HOMEPAGE_CONTACTS_DOCS_TEXT_QUERY = /* GraphQL */ `
+  query HomepageContactsDocsText {
+    homepage {
+      docsSubtitle: documentssubtitle
+      license1Label: license1label
+      license2Label: license2label
+    }
+  }
+`;
+
+type HomepageContactsDocsTextQuery = {
+  homepage: {
+    docsSubtitle: string | null;
+    license1Label: string | null;
+    license2Label: string | null;
+  } | null;
+};
+
+const HOMEPAGE_FAQ_QUERY = /* GraphQL */ `
+  query HomepageFaq {
+    homepage {
+      faqitem1question
+      faqitem1answer
+      faqitem2question
+      faqitem2answer
+      faqitem3question
+      faqitem3answer
+      faqitem4question
+      faqitem4answer
+      faqitem5question
+      faqitem5answer
+      faqitem6question
+      faqitem6answer
+      faqitem7question
+      faqitem7answer
+      faqitem8question
+      faqitem8answer
+      faqitem9question
+      faqitem9answer
+      faqitem10question
+      faqitem10answer
+      faqitem11question
+      faqitem11answer
+    }
+  }
+`;
+
+type HomepageFaqQuery = {
+  homepage: {
+    faqitem1question: string | null;
+    faqitem1answer: string | null;
+    faqitem2question: string | null;
+    faqitem2answer: string | null;
+    faqitem3question: string | null;
+    faqitem3answer: string | null;
+    faqitem4question: string | null;
+    faqitem4answer: string | null;
+    faqitem5question: string | null;
+    faqitem5answer: string | null;
+    faqitem6question: string | null;
+    faqitem6answer: string | null;
+    faqitem7question: string | null;
+    faqitem7answer: string | null;
+    faqitem8question: string | null;
+    faqitem8answer: string | null;
+    faqitem9question: string | null;
+    faqitem9answer: string | null;
+    faqitem10question: string | null;
+    faqitem10answer: string | null;
+    faqitem11question: string | null;
+    faqitem11answer: string | null;
+  } | null;
 };
 
 const HOMEPAGE_QUERY = /* GraphQL */ `
@@ -108,10 +223,19 @@ const HOMEPAGE_QUERY = /* GraphQL */ `
       fleetSubtitle: fleetsubtitle
       fleetItem1Title: fleetitem1title
       fleetItem1Description: fleetitem1description
+      fleetItem1Image: fleetitem1image {
+        url
+      }
       fleetItem2Title: fleetitem2title
       fleetItem2Description: fleetitem2description
+      fleetItem2Image: fleetitem2image {
+        url
+      }
       fleetItem3Title: fleetitem3title
       fleetItem3Description: fleetitem3description
+      fleetItem3Image: fleetitem3image {
+        url
+      }
 
       contactsTitle: contactstitle
       contactsSubtitle: contactssubtitle
@@ -122,6 +246,15 @@ const HOMEPAGE_QUERY = /* GraphQL */ `
       contactsHours: contactshours
       contactsMapNote: contactsmapnote
       contactsMapPlaceholder: contactsmapplaceholder
+      contactsRouteImage1: contactsrouteimage1 {
+        url
+      }
+      contactsRouteImage2: contactsrouteimage2 {
+        url
+      }
+      contactsRouteImage3: contactsrouteimage3 {
+        url
+      }
       contactsFormTitle: contactsformtitle
       contactsFormNamePlaceholder: contactsformnameplaceholder
       contactsFormPhonePlaceholder: contactsformphoneplaceholder
@@ -213,10 +346,13 @@ type HomepageQuery = {
     fleetSubtitle: string | null;
     fleetItem1Title: string | null;
     fleetItem1Description: string | null;
+    fleetItem1Image: { url: string | null } | null;
     fleetItem2Title: string | null;
     fleetItem2Description: string | null;
+    fleetItem2Image: { url: string | null } | null;
     fleetItem3Title: string | null;
     fleetItem3Description: string | null;
+    fleetItem3Image: { url: string | null } | null;
 
     contactsTitle: string | null;
     contactsSubtitle: string | null;
@@ -227,6 +363,9 @@ type HomepageQuery = {
     contactsHours: string | null;
     contactsMapNote: string | null;
     contactsMapPlaceholder: string | null;
+    contactsRouteImage1: { url: string | null } | null;
+    contactsRouteImage2: { url: string | null } | null;
+    contactsRouteImage3: { url: string | null } | null;
     contactsFormTitle: string | null;
     contactsFormNamePlaceholder: string | null;
     contactsFormPhonePlaceholder: string | null;
@@ -267,6 +406,159 @@ export default async function Home() {
     // Fallback to static content if Dato is not configured yet.
     dato = null;
   }
+
+  // Social links (MAX / Telegram) are fetched separately so the page stays
+  // working even if these fields are not yet created in DatoCMS.
+  let contactsSocial: HomepageContactsSocialQuery | null = null;
+  try {
+    contactsSocial = await performRequest<HomepageContactsSocialQuery>({
+      query: HOMEPAGE_CONTACTS_SOCIAL_QUERY,
+      includeDrafts: isDraft,
+      isVisualEditing: isDraft,
+    });
+  } catch {
+    contactsSocial = null;
+  }
+
+  const contactsMaxUrl = contactsSocial?.homepage?.contactsMaxUrl ?? null;
+  const contactsTelegramUrl =
+    contactsSocial?.homepage?.contactsTelegramUrl ?? null;
+
+  // Documents (2 licenses) + FAQ are also fetched separately for safety.
+  let contactsDocs: HomepageContactsDocsQuery | null = null;
+  try {
+    contactsDocs = await performRequest<HomepageContactsDocsQuery>({
+      query: HOMEPAGE_CONTACTS_DOCS_QUERY,
+      includeDrafts: isDraft,
+      isVisualEditing: isDraft,
+    });
+  } catch {
+    contactsDocs = null;
+  }
+
+  let contactsDocsText: HomepageContactsDocsTextQuery | null = null;
+  try {
+    contactsDocsText = await performRequest<HomepageContactsDocsTextQuery>({
+      query: HOMEPAGE_CONTACTS_DOCS_TEXT_QUERY,
+      includeDrafts: isDraft,
+      isVisualEditing: isDraft,
+    });
+  } catch {
+    contactsDocsText = null;
+  }
+
+  let faqData: HomepageFaqQuery | null = null;
+  try {
+    faqData = await performRequest<HomepageFaqQuery>({
+      query: HOMEPAGE_FAQ_QUERY,
+      includeDrafts: isDraft,
+      isVisualEditing: isDraft,
+    });
+  } catch {
+    faqData = null;
+  }
+
+  const contactsLicense1Url = contactsDocs?.homepage?.contactsLicense1?.url ?? null;
+  const contactsLicense2Url = contactsDocs?.homepage?.contactsLicense2?.url ?? null;
+
+  const docsSubtitle =
+    contactsDocsText?.homepage?.docsSubtitle ??
+    "Лицензии и разрешительные документы (можно добавить в DatoCMS).";
+  const license1Label =
+    contactsDocsText?.homepage?.license1Label ?? "Лицензия 1";
+  const license2Label =
+    contactsDocsText?.homepage?.license2Label ?? "Лицензия 2";
+
+  const faqItems = [
+    {
+      q:
+        faqData?.homepage?.faqitem1question ??
+        "По договору или без?",
+      a:
+        faqData?.homepage?.faqitem1answer ??
+        "По договору.",
+    },
+    {
+      q:
+        faqData?.homepage?.faqitem2question ??
+        "Электронный документооборот?",
+      a:
+        faqData?.homepage?.faqitem2answer ??
+        "Да, электронный документооборот (ЭДО) используется.",
+    },
+    {
+      q:
+        faqData?.homepage?.faqitem3question ??
+        "Можно ли без электронного документооборота?",
+      a:
+        faqData?.homepage?.faqitem3answer ??
+        "Можно, но предпочтительно ЭДО.",
+    },
+    {
+      q:
+        faqData?.homepage?.faqitem4question ??
+        "Подключенный ОССиГ?",
+      a:
+        faqData?.homepage?.faqitem4answer ??
+        "Да.",
+    },
+    {
+      q:
+        faqData?.homepage?.faqitem5question ??
+        "Можно ли без ОССиГ?",
+      a:
+        faqData?.homepage?.faqitem5answer ??
+        "Нет.",
+    },
+    {
+      q:
+        faqData?.homepage?.faqitem6question ??
+        "Нужна ли предоплата?",
+      a:
+        faqData?.homepage?.faqitem6answer ??
+        "Да, от 200 т.р.",
+    },
+    {
+      q:
+        faqData?.homepage?.faqitem7question ??
+        "Могут ли не принять груз при нарушениях по примеси отходов?",
+      a:
+        faqData?.homepage?.faqitem7answer ??
+        "Да.",
+    },
+    {
+      q:
+        faqData?.homepage?.faqitem8question ??
+        "Могут ли принять груз без договора?",
+      a:
+        faqData?.homepage?.faqitem8answer ??
+        "Нет.",
+    },
+    {
+      q:
+        faqData?.homepage?.faqitem9question ??
+        "Есть ли весы и лидары?",
+      a:
+        faqData?.homepage?.faqitem9answer ??
+        "Да.",
+    },
+    {
+      q:
+        faqData?.homepage?.faqitem10question ??
+        "Твердое ли покрытие на въезде?",
+      a:
+        faqData?.homepage?.faqitem10answer ??
+        "Нет. Но подъездной путь и дороги внутри карьера поддерживаются в нормативном состоянии, чтобы снизить/исключить вероятность застревания транспорта.",
+    },
+    {
+      q:
+        faqData?.homepage?.faqitem11question ??
+        "Возможен ли заезд грузового транспорта с прицепом?",
+      a:
+        faqData?.homepage?.faqitem11answer ??
+        "Да.",
+    },
+  ];
 
   const heroTitle =
     core?.homepage?.heroTitle ??
@@ -368,9 +660,23 @@ export default async function Home() {
     "Работаем с застройщиками, управляющими компаниями, ТЦ, производственными и логистическими комплексами.";
 
   const servicesFromDato =
-    core?.allServices?.filter((s) => s?.slug && s?.title) ??
-    dato?.allServices?.filter((s) => s?.slug && s?.title) ??
-    [];
+    core?.allServices
+      ?.filter((s) => s?.slug && s?.title)
+      .map((s) => ({
+        slug: s.slug,
+        title: s.title,
+        description: s.description,
+        imageUrl: s.serviceimage?.url ?? null,
+      })) ??
+    (dato?.allServices
+      ?.filter((s) => s?.slug && s?.title)
+      .map((s) => ({
+        slug: s.slug,
+        title: s.title,
+        description: s.description,
+        imageUrl: null,
+      })) ??
+      []);
 
   return (
     <SiteLayout>
@@ -398,7 +704,19 @@ export default async function Home() {
       <B2BSection title={b2bTitle} subtitle={b2bSubtitle} copy={dato?.homepage ?? null} />
       <WhyUsSection copy={dato?.homepage ?? null} />
       <FleetSection copy={dato?.homepage ?? null} />
-      <ContactsSection copy={dato?.homepage ?? null} />
+      <ContactsSection
+        copy={dato?.homepage ?? null}
+        contactsMaxUrl={contactsMaxUrl}
+        contactsTelegramUrl={contactsTelegramUrl}
+      />
+      <DocumentsSection
+        license1Url={contactsLicense1Url}
+        license2Url={contactsLicense2Url}
+        docsSubtitle={docsSubtitle}
+        license1Label={license1Label}
+        license2Label={license2Label}
+      />
+      <FaqSection items={faqItems} />
     </SiteLayout>
   );
 }
@@ -493,7 +811,12 @@ function HeroBadge({ title, desc }: HeroBadgeProps) {
   );
 }
 
-type ServiceCard = { slug: string; title: string; description?: string | null };
+type ServiceCard = {
+  slug: string;
+  title: string;
+  description?: string | null;
+  imageUrl?: string | null;
+};
 
 function ServicesSection({
   services,
@@ -509,38 +832,45 @@ function ServicesSection({
       slug: "construction",
       title: "Вывоз строительного мусора",
       description: "Контейнеры 8–27 м³ для демонтажа, ремонта и стройплощадок.",
+      imageUrl: null,
     },
     {
       slug: "household",
       title: "Вывоз бытовых отходов (КГО)",
       description: "Регулярный и разовый вывоз ТКО и крупногабаритного мусора.",
+      imageUrl: null,
     },
     {
       slug: "bulky",
       title: "Вывоз крупногабаритного мусора",
       description:
         "Мебель, оборудование, строительные конструкции, металлоконструкции.",
+      imageUrl: null,
     },
     {
       slug: "snow",
       title: "Вывоз снега",
       description: "Уборка и вывоз снега с территорий, парковок, промплощадок.",
+      imageUrl: null,
     },
     {
       slug: "flat-office",
       title: "Вывоз мусора из квартир и офисов",
       description:
         "Комплексный вывоз после переезда, ремонта, освобождения помещений.",
+      imageUrl: null,
     },
     {
       slug: "hazardous",
       title: "Утилизация опасных отходов (I–IV класс)",
       description: "Работаем по лицензии, предоставляем полный пакет документов.",
+      imageUrl: null,
     },
     {
       slug: "containers",
       title: "Аренда контейнеров (бункеров)",
       description: "Долгосрочная и разовая аренда контейнеров 8–27 м³.",
+      imageUrl: null,
     },
   ];
 
@@ -556,6 +886,16 @@ function ServicesSection({
         {list.map((service) => (
           <Card key={service.slug} className="flex flex-col justify-between">
             <div className="space-y-2">
+              {service.imageUrl && (
+                <div className="mb-2 h-32 overflow-hidden rounded-2xl bg-slate-800">
+                  <img
+                    src={service.imageUrl}
+                    alt={service.title}
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              )}
               <h3 className="text-sm font-semibold text-slate-50 sm:text-base">
                 {service.title}
               </h3>
@@ -781,18 +1121,21 @@ function FleetSection({ copy }: { copy: HomepageQuery["homepage"] }) {
       desc:
         copy?.fleetItem1Description ??
         "Для вывоза строительного и крупногабаритного мусора в контейнерах 8–27 м³.",
+      imageUrl: copy?.fleetItem1Image?.url ?? null,
     },
     {
       title: copy?.fleetItem2Title ?? "Самосвалы",
       desc:
         copy?.fleetItem2Description ??
         "Вывоз сыпучих материалов, грунта, снега с объектов любой сложности.",
+      imageUrl: copy?.fleetItem2Image?.url ?? null,
     },
     {
       title: copy?.fleetItem3Title ?? "Манипуляторы",
       desc:
         copy?.fleetItem3Description ??
         "Погрузка тяжелых и негабаритных отходов, металлолома, конструкций.",
+      imageUrl: copy?.fleetItem3Image?.url ?? null,
     },
   ];
 
@@ -801,7 +1144,18 @@ function FleetSection({ copy }: { copy: HomepageQuery["homepage"] }) {
       <div className="grid gap-5 md:grid-cols-3">
         {fleet.map((item) => (
           <Card key={item.title}>
-            <div className="mb-3 h-28 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900" />
+            {item.imageUrl ? (
+              <div className="mb-3 h-28 overflow-hidden rounded-2xl bg-slate-800">
+                <img
+                  src={item.imageUrl}
+                  alt={item.title}
+                  className="h-full w-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+            ) : (
+              <div className="mb-3 h-28 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900" />
+            )}
             <h3 className="text-sm font-semibold text-slate-50">
               {item.title}
             </h3>
@@ -813,7 +1167,15 @@ function FleetSection({ copy }: { copy: HomepageQuery["homepage"] }) {
   );
 }
 
-function ContactsSection({ copy }: { copy: HomepageQuery["homepage"] }) {
+function ContactsSection({
+  copy,
+  contactsMaxUrl,
+  contactsTelegramUrl,
+}: {
+  copy: HomepageQuery["homepage"];
+  contactsMaxUrl: string | null;
+  contactsTelegramUrl: string | null;
+}) {
   const title = copy?.contactsTitle ?? "Контакты и офис";
   const subtitle =
     copy?.contactsSubtitle ??
@@ -840,6 +1202,12 @@ function ContactsSection({ copy }: { copy: HomepageQuery["homepage"] }) {
     copy?.contactsFormHint ??
     "Менеджер свяжется с вами в рабочее время, чтобы уточнить детали и предложить оптимальное решение.";
 
+  const routeImages = [
+    copy?.contactsRouteImage1?.url ?? null,
+    copy?.contactsRouteImage2?.url ?? null,
+    copy?.contactsRouteImage3?.url ?? null,
+  ].filter((u): u is string => Boolean(u));
+
   return (
     <Section
       id="contacts"
@@ -853,13 +1221,65 @@ function ContactsSection({ copy }: { copy: HomepageQuery["homepage"] }) {
             <p>{officeAddress}</p>
             <p>{phone}</p>
             <p>{email}</p>
+            <p>
+              MAX:{" "}
+              {contactsMaxUrl ? (
+                <a
+                  href={contactsMaxUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-primary hover:text-primary-light break-all"
+                >
+                  {contactsMaxUrl}
+                </a>
+              ) : (
+                <span className="text-slate-400">(вставьте ссылку в DatoCMS)</span>
+              )}
+            </p>
+            <p>
+              Telegram:{" "}
+              {contactsTelegramUrl ? (
+                <a
+                  href={contactsTelegramUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-primary hover:text-primary-light break-all"
+                >
+                  {contactsTelegramUrl}
+                </a>
+              ) : (
+                <span className="text-slate-400">(вставьте ссылку в DatoCMS)</span>
+              )}
+            </p>
             <p>{hours}</p>
           </div>
           <p className="text-xs text-slate-500">
             {mapNote}
           </p>
-          <div className="h-56 rounded-2xl border border-dashed border-slate-700 bg-slate-900/60 text-xs text-slate-500 flex items-center justify-center text-center px-4">
-            {mapPlaceholder}
+
+          {routeImages.length > 0 && (
+            <div className="grid gap-3 grid-cols-1 sm:grid-cols-3">
+              {routeImages.map((src, idx) => (
+                <ImageLightbox
+                  key={src + idx}
+                  src={src}
+                  alt={`Схема проезда ${idx + 1}`}
+                  className="h-[280px] w-full overflow-hidden rounded-2xl bg-slate-900/60 border border-slate-800"
+                />
+              ))}
+            </div>
+          )}
+          <div className="h-56 rounded-2xl border border-dashed border-slate-700 bg-slate-900/60 overflow-hidden">
+            <iframe
+              src="https://yandex.ru/map-widget/v1/-/CLxP7WPr"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title={mapPlaceholder}
+            />
           </div>
         </Card>
         <Card className="space-y-3">
@@ -890,6 +1310,98 @@ function ContactsSection({ copy }: { copy: HomepageQuery["homepage"] }) {
             </p>
           </form>
         </Card>
+      </div>
+    </Section>
+  );
+}
+
+function DocumentsSection({
+  license1Url,
+  license2Url,
+  docsSubtitle,
+  license1Label,
+  license2Label,
+}: {
+  license1Url: string | null;
+  license2Url: string | null;
+  docsSubtitle: string;
+  license1Label: string;
+  license2Label: string;
+}) {
+  return (
+    <Section title="Документы" subtitle={docsSubtitle}>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Card className="space-y-2">
+          <div className="text-center text-sm font-semibold text-slate-50">
+            {license1Url ? (
+              <a
+                href={license1Url}
+                target="_blank"
+                rel="noreferrer"
+                className="text-primary hover:text-primary-light break-all inline-block"
+              >
+                {license1Label}
+              </a>
+            ) : (
+              license1Label
+            )}
+          </div>
+          {license1Url ? (
+            null
+          ) : (
+            <div className="text-sm text-slate-500">Добавьте файл в DatoCMS: `license1`</div>
+          )}
+        </Card>
+        <Card className="space-y-2">
+          <div className="text-sm font-semibold text-slate-50">
+            {license2Url ? (
+              <a
+                href={license2Url}
+                target="_blank"
+                rel="noreferrer"
+                className="text-primary hover:text-primary-light break-all"
+              >
+                {license2Label}
+              </a>
+            ) : (
+              license2Label
+            )}
+          </div>
+          {license2Url ? (
+            null
+          ) : (
+            <div className="text-sm text-slate-500">Добавьте файл в DatoCMS: `license2`</div>
+          )}
+        </Card>
+      </div>
+    </Section>
+  );
+}
+
+function FaqSection({
+  items,
+}: {
+  items: Array<{
+    q: string;
+    a: string;
+  }>;
+}) {
+  return (
+    <Section title="Часто задаваемые вопросы">
+      <div className="space-y-3">
+        {items.map((item, idx) => (
+          <details
+            key={idx}
+            className="group rounded-2xl border border-slate-800 bg-slate-900/30 p-4"
+          >
+            <summary className="cursor-pointer text-sm font-medium text-slate-50">
+              {item.q}
+            </summary>
+            <div className="mt-2 whitespace-pre-line text-sm text-slate-300">
+              {item.a}
+            </div>
+          </details>
+        ))}
       </div>
     </Section>
   );

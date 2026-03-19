@@ -1,11 +1,13 @@
 import { SiteLayout } from "@/components/layout";
 import { Card, Section } from "@/components/ui";
 import { performRequest } from "@/lib/datocms";
+import { cookies } from "next/headers";
 
 type ServiceCard = {
   slug: string;
   title: string;
   description: string | null;
+  imageUrl: string | null;
 };
 
 const SERVICES: ServiceCard[] = [
@@ -14,42 +16,49 @@ const SERVICES: ServiceCard[] = [
     title: "Вывоз строительного мусора",
     description:
       "Контейнеры 8–27 м³ для вывоза отходов после демонтажа, ремонта и строительства. Работаем с подрядчиками и частными лицами.",
+    imageUrl: null,
   },
   {
     slug: "household",
     title: "Вывоз бытовых отходов (КГО)",
     description:
       "Разовый и регулярный вывоз крупногабаритных и бытовых отходов из дворов, ЖК, коммерческих объектов.",
+    imageUrl: null,
   },
   {
     slug: "bulky",
     title: "Вывоз крупногабаритного мусора",
     description:
       "Вывоз мебели, техники, оборудования и иных крупногабаритных отходов с последующей утилизацией.",
+    imageUrl: null,
   },
   {
     slug: "snow",
     title: "Вывоз снега",
     description:
       "Комплексная уборка и вывоз снега с территорий, парковок и промышленных площадок.",
+    imageUrl: null,
   },
   {
     slug: "flat-office",
     title: "Вывоз мусора из квартир и офисов",
     description:
       "Оперативное освобождение квартир, офисов и складов после ремонта, переезда или ликвидации.",
+    imageUrl: null,
   },
   {
     slug: "hazardous",
     title: "Утилизация опасных отходов (I–IV класс)",
     description:
       "Работаем по лицензии, обеспечиваем безопасный сбор, вывоз и утилизацию опасных отходов.",
+    imageUrl: null,
   },
   {
     slug: "containers",
     title: "Аренда контейнеров (бункеров)",
     description:
       "Аренда контейнеров 8–27 м³ с возможностью долгосрочного размещения на объекте.",
+    imageUrl: null,
   },
 ];
 
@@ -59,24 +68,43 @@ const ALL_SERVICES_QUERY = /* GraphQL */ `
       slug
       title
       description
+      serviceimage {
+        url
+      }
     }
   }
 `;
 
 type AllServicesQuery = {
-  allServices: ServiceCard[];
+  allServices: Array<{
+    slug: string;
+    title: string;
+    description: string | null;
+    serviceimage?: { url?: string | null } | null;
+  }>;
 };
 
 export default async function ServicesPage() {
   let services = SERVICES;
+
+  const cookieStore = await cookies();
+  const isDraft = cookieStore.get("datocms-draft")?.value === "true";
+
   try {
     const data = await performRequest<AllServicesQuery>({
       query: ALL_SERVICES_QUERY,
-      includeDrafts: false,
-      isVisualEditing: false,
+      includeDrafts: isDraft,
+      isVisualEditing: isDraft,
     });
     const fromDato =
-      data.allServices?.filter((s) => s?.slug && s?.title) ?? [];
+      data.allServices
+        ?.filter((s) => s?.slug && s?.title)
+        .map((s) => ({
+          slug: s.slug,
+          title: s.title,
+          description: s.description ?? null,
+          imageUrl: s.serviceimage?.url ?? null,
+        })) ?? [];
     if (fromDato.length) services = fromDato;
   } catch {
     services = SERVICES;
@@ -92,12 +120,19 @@ export default async function ServicesPage() {
           {services.map((service) => (
             <Card key={service.slug} className="flex flex-col justify-between">
               <div className="space-y-2">
+                {service.imageUrl && (
+                  <div className="mb-2 h-32 overflow-hidden rounded-2xl bg-slate-800">
+                    <img
+                      src={service.imageUrl}
+                      alt={service.title}
+                      className="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
                 <h2 className="text-sm font-semibold text-slate-50 sm:text-base">
                   {service.title}
                 </h2>
-                <p className="text-xs text-slate-400 sm:text-sm">
-                  {service.description}
-                </p>
               </div>
               <a
                 href={`/services/${service.slug}`}

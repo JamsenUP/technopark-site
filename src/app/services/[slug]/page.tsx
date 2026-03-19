@@ -9,6 +9,7 @@ const SERVICE_CONTENT = {
     title: "Вывоз строительного мусора",
     description:
       "Организуем вывоз строительного мусора с частных объектов и стройплощадок. Предоставляем контейнеры 8–27 м³, самосвалы и погрузку.",
+    imageUrl: null as string | null,
     variants: [
       "Контейнер 8 м³ — для небольших ремонтов и частных домов",
       "Контейнер 20 м³ — для средних объектов и демонтажа перегородок",
@@ -19,6 +20,7 @@ const SERVICE_CONTENT = {
     title: "Вывоз бытовых отходов (КГО)",
     description:
       "Вывоз крупногабаритного и бытового мусора во дворах, на территориях ЖК и коммерческих объектах. Работаем разово и по абонентским договорам.",
+    imageUrl: null as string | null,
     variants: [
       "Разовый вывоз КГО по заявке УК или ТСЖ",
       "Регулярный вывоз по графику",
@@ -29,6 +31,7 @@ const SERVICE_CONTENT = {
     title: "Вывоз крупногабаритного мусора",
     description:
       "Забираем и утилизируем мебель, оборудование, витрины, металлические конструкции и прочие крупногабаритные отходы.",
+    imageUrl: null as string | null,
     variants: [
       "Вывоз мебели и интерьера при переездах",
       "Демонтаж и вывоз торгового оборудования",
@@ -39,6 +42,7 @@ const SERVICE_CONTENT = {
     title: "Вывоз снега",
     description:
       "Уборка и вывоз снега с территорий, парковок, складских и промышленных площадок. Работаем ночью и в выходные.",
+    imageUrl: null as string | null,
     variants: [
       "Разовый вывоз снега после обильных осадков",
       "Сезонное обслуживание территорий",
@@ -49,6 +53,7 @@ const SERVICE_CONTENT = {
     title: "Вывоз мусора из квартир и офисов",
     description:
       "Комплексный вывоз мусора из квартир, офисов и складов после ремонта, переезда или ликвидации.",
+    imageUrl: null as string | null,
     variants: [
       "Вывоз после ремонта квартиры или офиса",
       "Освобождение помещений под сдачу или продажу",
@@ -59,6 +64,7 @@ const SERVICE_CONTENT = {
     title: "Утилизация опасных отходов (I–IV класс)",
     description:
       "Сбор, вывоз и утилизация опасных отходов по лицензии. Обеспечиваем полное соответствие требованиям законодательства.",
+    imageUrl: null as string | null,
     variants: [
       "Разработка схемы обращения с отходами",
       "Вывоз и утилизация по утвержденному графику",
@@ -69,6 +75,7 @@ const SERVICE_CONTENT = {
     title: "Аренда контейнеров (бункеров)",
     description:
       "Аренда контейнеров 8–27 м³ с возможностью длительного размещения на объекте. Гибкие условия для строек и промпредприятий.",
+    imageUrl: null as string | null,
     variants: [
       "Краткосрочная аренда контейнеров под проект",
       "Долгосрочное размещение контейнеров на объекте",
@@ -114,12 +121,22 @@ const SERVICE_BY_SLUG_QUERY = /* GraphQL */ `
       title
       description
       slug
+      serviceimage {
+        url
+      }
     }
   }
 `;
 
 type ServiceBySlugQuery = {
-  service: { title: string; description?: string | null; slug: string } | null;
+  service:
+    | {
+        title: string;
+        description?: string | null;
+        slug: string;
+        serviceimage?: { url?: string | null } | null;
+      }
+    | null;
 };
 
 export default async function ServicePage({ params }: ServicePageProps) {
@@ -128,7 +145,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
   const isDraft = cookieStore.get("datocms-draft")?.value === "true";
 
   let service:
-    | { title: string; description?: string | null; variants?: string[] }
+    | { title: string; description?: string | null; variants?: string[]; imageUrl: string | null }
     | null = null;
 
   try {
@@ -143,6 +160,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
       service = {
         title: data.service.title,
         description: data.service.description ?? "",
+        imageUrl: data.service.serviceimage?.url ?? null,
       };
     }
   } catch {
@@ -168,7 +186,19 @@ export default async function ServicePage({ params }: ServicePageProps) {
       >
         <div className="grid gap-6 lg:grid-cols-[1.4fr,1fr]">
           <Card className="space-y-4">
-            <p className="text-sm text-slate-200">{resolved.description}</p>
+            {resolved.imageUrl && (
+              <div className="h-44 overflow-hidden rounded-2xl bg-slate-800">
+                <img
+                  src={resolved.imageUrl}
+                  alt={resolved.title}
+                  className="h-full w-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+            )}
+            <p className="text-sm text-slate-200">
+              {resolved.description ?? ""}
+            </p>
             <div className="space-y-2 text-sm text-slate-200">
               <p className="font-medium">Тарифы и варианты:</p>
               <ul className="space-y-1 text-sm text-slate-300">

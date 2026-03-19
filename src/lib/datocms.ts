@@ -34,6 +34,12 @@ export async function performRequest<TData, TVariables extends Record<string, un
     "Content-Type": "application/json",
   };
 
+  // Allow targeting a non-primary DatoCMS environment (e.g. sandbox).
+  // Set DATOCMS_ENVIRONMENT in your environment if you created fields outside "primary".
+  if (process.env.DATOCMS_ENVIRONMENT) {
+    headers["X-Environment"] = process.env.DATOCMS_ENVIRONMENT;
+  }
+
   // Include drafts (preview) + Visual Editing headers
   if (includeDrafts) {
     headers["X-Include-Drafts"] = "true";
