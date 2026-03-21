@@ -905,7 +905,7 @@ function ServicesSection({
             </div>
             <a
               href={`/services/${service.slug}`}
-              className="mt-4 inline-flex text-xs font-medium text-primary hover:text-primary-light"
+              className="mt-4 inline-flex items-center justify-center text-center whitespace-nowrap rounded-full border border-slate-700/80 bg-white px-3 py-1.5 text-xs font-medium text-[#0A2472] transition-colors hover:bg-[#7f8c8d] hover:text-white"
             >
               Подробнее об услуге
             </a>
@@ -1222,39 +1222,37 @@ function ContactsSection({
             <p>{officeAddress}</p>
             <p>{phone}</p>
             <p>{email}</p>
-            <p>
+            <p>{hours}</p>
+            <div className="flex items-center gap-2 pt-1">
               {contactsMaxUrl ? (
                 <a
                   href={contactsMaxUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-primary hover:text-primary-light"
+                  className="inline-flex whitespace-nowrap rounded-full border border-slate-700/80 bg-white px-3 py-1.5 text-xs font-medium text-[#0A2472] transition-colors hover:bg-[#7f8c8d] hover:text-white"
                 >
                   MAX
                 </a>
               ) : (
-                <>
-                  MAX: <span className="text-slate-400">(вставьте ссылку в DatoCMS)</span>
-                </>
+                <span className="text-slate-400 text-xs whitespace-nowrap">
+                  MAX: добавьте ссылку
+                </span>
               )}
-            </p>
-            <p>
               {contactsTelegramUrl ? (
                 <a
                   href={contactsTelegramUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-primary hover:text-primary-light"
+                  className="inline-flex whitespace-nowrap rounded-full border border-slate-700/80 bg-white px-3 py-1.5 text-xs font-medium text-[#0A2472] transition-colors hover:bg-[#7f8c8d] hover:text-white"
                 >
                   Telegram
                 </a>
               ) : (
-                <>
-                  Telegram: <span className="text-slate-400">(вставьте ссылку в DatoCMS)</span>
-                </>
+                <span className="text-slate-400 text-xs whitespace-nowrap">
+                  Telegram: добавьте ссылку
+                </span>
               )}
-            </p>
-            <p>{hours}</p>
+            </div>
           </div>
           <p className="text-xs text-slate-500">
             {mapNote}

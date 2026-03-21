@@ -136,7 +136,7 @@ export default async function ServicesPage() {
               </div>
               <a
                 href={`/services/${service.slug}`}
-                className="mt-4 inline-flex text-xs font-medium text-primary hover:text-primary-light"
+                className="mt-4 inline-flex items-center justify-center text-center whitespace-nowrap rounded-full border border-slate-700/80 bg-white px-3 py-1.5 text-xs font-medium text-[#0A2472] transition-colors hover:bg-[#7f8c8d] hover:text-white"
               >
                 Подробнее об услуге
               </a>
