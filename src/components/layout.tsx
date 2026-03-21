@@ -72,8 +72,13 @@ export function Header({ settings }: { settings: SiteSettings | null }) {
     <header className="sticky top-0 z-40 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-xl">
       <div className="container-max flex h-16 items-center justify-between gap-6">
         <Link href="/" className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-            <span className="text-lg font-semibold">T</span>
+          <div className="h-15 w-15 overflow-hidden rounded-2xl border border-slate-700/80 bg-slate-900/60">
+            <img
+              src="/header-logo.png"
+              alt={companyName}
+              className="h-full w-full object-cover"
+              loading="eager"
+            />
           </div>
           <div className="flex flex-col">
             <span className="text-xs uppercase tracking-[0.18em] text-slate-400">
@@ -111,7 +116,7 @@ export function Header({ settings }: { settings: SiteSettings | null }) {
           </button>
 
           <Link
-            href="/b2b"
+            href="/#b2b"
             className="hidden whitespace-nowrap rounded-full border border-slate-700/80 bg-white px-3 py-1.5 text-xs font-medium text-[#0A2472] hover:bg-[#7f8c8d] hover:text-white md:inline-flex"
           >
             {b2bCta}

@@ -1027,6 +1027,7 @@ function B2BSection({
 
   return (
     <Section
+      id="b2b"
       title={title}
       subtitle={subtitle}
     >
