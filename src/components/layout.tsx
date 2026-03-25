@@ -19,6 +19,10 @@ type SiteSettings = {
   footerText: string | null;
   email: string | null;
   workHours: string | null;
+  ogrn: string | null;
+  inn: string | null;
+  jurAddress: string | null;
+  licenseNumber: string | null;
 };
 
 const SITE_SETTINGS_QUERY = /* GraphQL */ `
@@ -42,14 +46,59 @@ const SITE_SETTINGS_QUERY = /* GraphQL */ `
   }
 `;
 
+const SITE_SETTINGS_DOCS_QUERY = /* GraphQL */ `
+  query SiteSettingsDocs {
+    sitesetting {
+      ogrn
+      inn
+      jurAddress: juraddress
+      licenseNumber: licensenumber
+    }
+  }
+`;
+
 async function fetchSiteSettings(isDraft: boolean): Promise<SiteSettings | null> {
   try {
-    const data = await performRequest<{ sitesetting: SiteSettings | null }>({
+    const data = await performRequest<{ sitesetting: Omit<SiteSettings, "ogrn" | "inn" | "jurAddress" | "licenseNumber"> | null }>({
       query: SITE_SETTINGS_QUERY,
       includeDrafts: isDraft,
       isVisualEditing: isDraft,
     });
-    return data.sitesetting ?? null;
+
+    // If new fields are not yet added in DatoCMS, keep the site working.
+    let docs: { ogrn: string | null; inn: string | null; jurAddress: string | null; licenseNumber: string | null } =
+      { ogrn: null, inn: null, jurAddress: null, licenseNumber: null };
+    try {
+      const docsData = await performRequest<{
+        sitesetting: {
+          ogrn: string | null;
+          inn: string | null;
+          jurAddress: string | null;
+          licenseNumber: string | null;
+        } | null;
+      }>({
+        query: SITE_SETTINGS_DOCS_QUERY,
+        includeDrafts: isDraft,
+        isVisualEditing: isDraft,
+      });
+      docs = {
+        ogrn: docsData.sitesetting?.ogrn ?? null,
+        inn: docsData.sitesetting?.inn ?? null,
+        jurAddress: docsData.sitesetting?.jurAddress ?? null,
+        licenseNumber: docsData.sitesetting?.licenseNumber ?? null,
+      };
+    } catch {
+      // ignore
+    }
+
+    if (!data.sitesetting) {
+      return null;
+    }
+
+    return {
+      ...data.sitesetting,
+      ...docs,
+    };
   } catch {
     return null;
   }
@@ -57,7 +106,7 @@ async function fetchSiteSettings(isDraft: boolean): Promise<SiteSettings | null>
 
 export function Header({ settings }: { settings: SiteSettings | null }) {
   const companyName = settings?.companyName ?? "ООО «ТЕХНОПАРК»";
-  const headerTagline = settings?.headerTagline ?? "Вывоз и утилизация отходов";
+  const headerTagline = settings?.headerTagline ?? "Утилизация отходов";
   const navAboutLabel = settings?.navAboutLabel ?? "О нас";
   const navServicesLabel = settings?.navServicesLabel ?? "Услуги";
   const navCalculatorLabel = settings?.navCalculatorLabel ?? "Калькулятор";
@@ -72,28 +121,12 @@ export function Header({ settings }: { settings: SiteSettings | null }) {
     <header className="sticky top-0 z-40 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-xl">
       <div className="container-max flex h-16 items-center justify-between gap-6">
         <Link href="/" className="flex items-center gap-3">
-          <div className="h-15 w-15 overflow-hidden rounded-2xl border border-slate-700/80 bg-slate-900/60">
-            <img
-              src="/header-logo.png"
-              alt={companyName}
-              className="h-full w-full object-cover"
-              loading="eager"
-            />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-xs uppercase tracking-[0.18em] text-slate-400">
-              {companyName}
-            </span>
-            <span className="whitespace-nowrap text-sm font-medium text-slate-50">
-              {headerTagline}
-            </span>
-          </div>
+          <span className="text-xs uppercase tracking-[0.18em] text-slate-400">технопарк</span>
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex">
           <NavLink href="#about">{navAboutLabel}</NavLink>
           <NavLink href="#services">{navServicesLabel}</NavLink>
-          <NavLink href="#calculator">{navCalculatorLabel}</NavLink>
           <NavLink href="#contacts">{navContactsLabel}</NavLink>
         </nav>
 
@@ -131,11 +164,15 @@ export function Footer({ settings }: { settings: SiteSettings | null }) {
   const companyName = settings?.companyName ?? "ООО «ТЕХНОПАРК»";
   const footerText =
     settings?.footerText ??
-    "Профессиональный вывоз и утилизация отходов I–IV классов в вашем городе.";
+    "Профессиональная утилизация отходов I–IV классов в вашем городе.";
   const phoneDisplay = settings?.phoneDisplay ?? "+7 (800) 555-35-35";
   const phoneHref = settings?.phoneHref ?? "tel:+78005553535";
   const email = settings?.email ?? "info@tehnopark.ru";
   const workHours = settings?.workHours ?? "Ежедневно: 8:00 — 22:00";
+  const ogrn = settings?.ogrn;
+  const inn = settings?.inn;
+  const jurAddress = settings?.jurAddress;
+  const licenseNumber = settings?.licenseNumber;
 
   return (
     <footer className="border-t border-slate-800/80 bg-slate-950">
@@ -143,6 +180,14 @@ export function Footer({ settings }: { settings: SiteSettings | null }) {
         <div className="space-y-1">
           <p>© {new Date().getFullYear()} {companyName}</p>
           <p className="text-xs text-slate-500">{footerText}</p>
+          {(ogrn || inn || jurAddress || licenseNumber) && (
+            <div className="pt-2 text-xs text-slate-500 space-y-1">
+              {ogrn && <p>ОГРН: {ogrn}</p>}
+              {inn && <p>ИНН: {inn}</p>}
+              {jurAddress && <p>Юр. адрес: {jurAddress}</p>}
+              {licenseNumber && <p>Лицензия: {licenseNumber}</p>}
+            </div>
+          )}
         </div>
         <div className="flex flex-wrap gap-4">
           <a href={phoneHref} className="hover:text-white">

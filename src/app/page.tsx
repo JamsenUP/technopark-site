@@ -563,14 +563,14 @@ export default async function Home() {
   const heroTitle =
     core?.homepage?.heroTitle ??
     dato?.homepage?.heroTitle ??
-    "Профессиональный вывоз мусора в Вашем городе.";
+    "Профессиональная утилизация мусора в Вашем городе.";
   const heroDescription =
     core?.homepage?.heroDescription ??
     dato?.homepage?.heroDescription ??
-    "Оперативный вывоз строительного, бытового и крупногабаритного мусора. Своя спецтехника, лицензии, электронные документы для юридических лиц.";
+    "Оперативная утилизация строительного, бытового и крупногабаритного мусора. Своя спецтехника, лицензии, электронные документы для юридических лиц.";
 
   const heroPill =
-    dato?.homepage?.heroPill ?? "Вывоз и утилизация отходов I–IV классов";
+    dato?.homepage?.heroPill ?? "Утилизация отходов I–IV классов";
 
   const heroBadges = [
     {
@@ -594,7 +594,7 @@ export default async function Home() {
   ];
 
   const servicesTitle =
-    dato?.homepage?.servicesTitle ?? "Услуги по вывозу и утилизации отходов";
+    dato?.homepage?.servicesTitle ?? "Услуги по утилизации отходов";
   const servicesSubtitle =
     dato?.homepage?.servicesSubtitle ??
     "Работаем с частными и корпоративными клиентами, подбираем оптимальное решение под задачу и бюджет.";
@@ -605,16 +605,16 @@ export default async function Home() {
     "Простая и прозрачная схема сотрудничества — от первичного расчета до закрывающих документов.";
 
   const calculatorSectionTitle =
-    dato?.homepage?.calculatorSectionTitle ?? "Калькулятор стоимости вывоза";
+    dato?.homepage?.calculatorSectionTitle ?? "Калькулятор стоимости утилизации";
   const calculatorSectionSubtitle =
     dato?.homepage?.calculatorSectionSubtitle ??
-    "Оцените бюджет на вывоз отходов онлайн за 1 минуту. Для точного расчета менеджер свяжется с вами после отправки заявки.";
+    "Оцените бюджет на утилизацию отходов онлайн за 1 минуту. Для точного расчета менеджер свяжется с вами после отправки заявки.";
 
   const calculatorCopy = {
     eyebrow: dato?.homepage?.calculatorEyebrow ?? "Онлайн-калькулятор",
     title:
       dato?.homepage?.calculatorTitle ??
-      "Рассчитайте стоимость вывоза онлайн за 1 минуту",
+      "Рассчитайте стоимость утилизации онлайн за 1 минуту",
     wasteTypeLabel: dato?.homepage?.calculatorWasteTypeLabel ?? "Тип отходов",
     wasteTypeConstruction:
       dato?.homepage?.calculatorWasteTypeConstruction ?? "Строительный",
@@ -632,7 +632,7 @@ export default async function Home() {
     volumeLabel: dato?.homepage?.calculatorVolumeLabel ?? "Объем, м³",
     volumeRangeLabel:
       dato?.homepage?.calculatorVolumeRangeLabel ?? "1–60 м³",
-    addressLabel: dato?.homepage?.calculatorAddressLabel ?? "Адрес вывоза",
+    addressLabel: dato?.homepage?.calculatorAddressLabel ?? "Адрес утилизации",
     addressPlaceholder:
       dato?.homepage?.calculatorAddressPlaceholder ??
       "Город, улица, дом, объект",
@@ -696,11 +696,6 @@ export default async function Home() {
         subtitle={howWeWorkSubtitle}
         copy={dato?.homepage ?? null}
       />
-      <CalculatorSection
-        title={calculatorSectionTitle}
-        subtitle={calculatorSectionSubtitle}
-        calculatorCopy={calculatorCopy}
-      />
       <B2BSection title={b2bTitle} subtitle={b2bSubtitle} copy={dato?.homepage ?? null} />
       <WhyUsSection copy={dato?.homepage ?? null} />
       <FleetSection copy={dato?.homepage ?? null} />
@@ -763,7 +758,7 @@ function HeroSection({
             Быстрая заявка
           </p>
           <h2 className="mt-2 text-lg font-semibold text-white">
-            Оставьте заявку на вывоз мусора
+            Оставьте заявку на утилизацию мусора
           </h2>
           <p className="mt-1 text-xs text-slate-400">
             Перезвоним в течение 10 минут, уточним детали и подберем технику.
@@ -830,34 +825,34 @@ function ServicesSection({
   const fallback: ServiceCard[] = [
     {
       slug: "construction",
-      title: "Вывоз строительного мусора",
+      title: "Утилизация строительного мусора",
       description: "Контейнеры 8–27 м³ для демонтажа, ремонта и стройплощадок.",
       imageUrl: null,
     },
     {
       slug: "household",
-      title: "Вывоз бытовых отходов (КГО)",
-      description: "Регулярный и разовый вывоз ТКО и крупногабаритного мусора.",
+      title: "Утилизация бытовых отходов (КГО)",
+      description: "Регулярная и разовая утилизация ТКО и крупногабаритного мусора.",
       imageUrl: null,
     },
     {
       slug: "bulky",
-      title: "Вывоз крупногабаритного мусора",
+      title: "Утилизация крупногабаритного мусора",
       description:
         "Мебель, оборудование, строительные конструкции, металлоконструкции.",
       imageUrl: null,
     },
     {
       slug: "snow",
-      title: "Вывоз снега",
-      description: "Уборка и вывоз снега с территорий, парковок, промплощадок.",
+      title: "Утилизация снега",
+      description: "Уборка и утилизация снега с территорий, парковок, промплощадок.",
       imageUrl: null,
     },
     {
       slug: "flat-office",
-      title: "Вывоз мусора из квартир и офисов",
+      title: "Утилизация мусора из квартир и офисов",
       description:
-        "Комплексный вывоз после переезда, ремонта, освобождения помещений.",
+        "Комплексная утилизация после переезда, ремонта, освобождения помещений.",
       imageUrl: null,
     },
     {
@@ -937,16 +932,16 @@ function HowWeWorkSection({
       desc: copy?.howWeWorkStep2Desc ?? "Уточняем объем, тип отходов, адрес, сроки.",
     },
     {
-      title: copy?.howWeWorkStep3Title ?? "Условия вывоза",
+      title: copy?.howWeWorkStep3Title ?? "Условия утилизации",
       desc:
         copy?.howWeWorkStep3Desc ??
-        "Согласовываем условия вывоза и утилизации, заключаем договор.",
+        "Согласовываем условия утилизации и заключаем договор.",
     },
     {
       title: copy?.howWeWorkStep4Title ?? "Утилизация и документы",
       desc:
         copy?.howWeWorkStep4Desc ??
-        "Вывозим отходы на лицензированные полигоны, предоставляем закрывающие документы.",
+        "Утилизируем отходы на лицензированные полигоны, предоставляем закрывающие документы.",
     },
   ];
 
@@ -1087,7 +1082,7 @@ function WhyUsSection({ copy }: { copy: HomepageQuery["homepage"] }) {
 
   const items = [
     copy?.whyUsItem1 ?? "Лицензия на обращение с отходами I–IV классов",
-    copy?.whyUsItem2 ?? "Опыт работы более 5 лет в сфере вывоза и утилизации",
+    copy?.whyUsItem2 ?? "Опыт работы более 5 лет в сфере утилизации отходов",
     copy?.whyUsItem3 ?? "Собственный парк техники и обученный персонал",
     copy?.whyUsItem4 ?? "Прозрачные и фиксированные цены, без скрытых платежей",
     copy?.whyUsItem5 ?? "Страхование груза и ответственность за утилизацию",
@@ -1121,14 +1116,14 @@ function FleetSection({ copy }: { copy: HomepageQuery["homepage"] }) {
       title: copy?.fleetItem1Title ?? "Контейнеровозы с мультилифтами",
       desc:
         copy?.fleetItem1Description ??
-        "Для вывоза строительного и крупногабаритного мусора в контейнерах 8–27 м³.",
+        "Для утилизации строительного и крупногабаритного мусора в контейнерах 8–27 м³.",
       imageUrl: copy?.fleetItem1Image?.url ?? null,
     },
     {
       title: copy?.fleetItem2Title ?? "Самосвалы",
       desc:
         copy?.fleetItem2Description ??
-        "Вывоз сыпучих материалов, грунта, снега с объектов любой сложности.",
+        "Утилизация сыпучих материалов, грунта, снега с объектов любой сложности.",
       imageUrl: copy?.fleetItem2Image?.url ?? null,
     },
     {
@@ -1177,23 +1172,24 @@ function ContactsSection({
   contactsMaxUrl: string | null;
   contactsTelegramUrl: string | null;
 }) {
-  const title = copy?.contactsTitle ?? "Контакты и офис";
+  const title = copy?.contactsTitle ?? "Контакты";
   const subtitle =
     copy?.contactsSubtitle ??
     "Работаем по договору, принимаем заявки по телефону и через сайт.";
 
   const companyName = copy?.contactsCompanyName ?? "ООО «ТЕХНОПАРК»";
   const officeAddress =
-    copy?.contactsOfficeAddress ?? "Адрес офиса: г. [Ваш город], ул. Примерная, д. 10";
+    copy?.contactsOfficeAddress ??
+    "Адрес: Московская область, Рузский г.о., д. Крюкова, земельный участок с кадастровым номером: 50:19:0050628:357";
   const phone = copy?.contactsPhone ?? "Телефон: +7 (800) 555-35-35";
   const email = copy?.contactsEmail ?? "E-mail: info@tehnopark.ru";
   const hours = copy?.contactsHours ?? "Режим работы: ежедневно, 8:00 — 22:00";
 
   const mapNote =
     copy?.contactsMapNote ??
-    "Интеграция с Яндекс.Картами: добавьте JavaScript SDK и компонент карты по вашему API-ключу. В данный блок можно встроить интерактивную карту с меткой офиса.";
+    "Интеграция с Яндекс.Картами: добавьте JavaScript SDK и компонент карты по вашему API-ключу. В данный блок можно встроить интерактивную карту с меткой объекта.";
   const mapPlaceholder =
-    copy?.contactsMapPlaceholder ?? "Здесь будет карта Яндекс с меткой офиса ООО «ТЕХНОПАРК».";
+    copy?.contactsMapPlaceholder ?? "Здесь будет карта Яндекс с меткой объекта ООО «ТЕХНОПАРК».";
 
   const namePlaceholder = copy?.contactsFormNamePlaceholder ?? "Имя";
   const phonePlaceholder = copy?.contactsFormPhonePlaceholder ?? "Телефон";

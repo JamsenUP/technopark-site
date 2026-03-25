@@ -56,7 +56,7 @@ export type CalculatorCopy = {
 
 const defaultCopy: CalculatorCopy = {
   eyebrow: "Онлайн-калькулятор",
-  title: "Рассчитайте стоимость вывоза онлайн за 1 минуту",
+  title: "Рассчитайте стоимость утилизации онлайн за 1 минуту",
   wasteTypeLabel: "Тип отходов",
   wasteTypeConstruction: "Строительный",
   wasteTypeHousehold: "Бытовой",
@@ -67,7 +67,7 @@ const defaultCopy: CalculatorCopy = {
   calculationByContainer: "По контейнеру",
   volumeLabel: "Объем, м³",
   volumeRangeLabel: "1–60 м³",
-  addressLabel: "Адрес вывоза",
+  addressLabel: "Адрес утилизации",
   addressPlaceholder: "Город, улица, дом, объект",
   submitLabel: "Рассчитать стоимость",
   consentText: "Нажимая кнопку, вы соглашаетесь с обработкой персональных данных.",
