@@ -698,7 +698,6 @@ export default async function Home() {
       />
       <B2BSection title={b2bTitle} subtitle={b2bSubtitle} copy={dato?.homepage ?? null} />
       <WhyUsSection copy={dato?.homepage ?? null} />
-      <FleetSection copy={dato?.homepage ?? null} />
       <ContactsSection
         copy={dato?.homepage ?? null}
         contactsMaxUrl={contactsMaxUrl}
